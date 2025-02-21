@@ -27,6 +27,11 @@ import * as prettier from "prettier";
     await fs.writeFile("dist/index.d.ts", formattedData);
 })();
 
+/**
+ * Remove 'type' from schemas that have defined 'allOf'.
+ * Our library for creating the types doesn't work at all with this defined.
+ * @param specification
+ */
 function cleanupAllOf(specification: OpenAPIV3.Document) {
     if (!specification.components?.schemas) return;
 
@@ -37,6 +42,11 @@ function cleanupAllOf(specification: OpenAPIV3.Document) {
         .forEach((property) => delete property["type"]);
 }
 
+/**
+ * Remove 'type' from schemas that have defined 'oneOf'.
+ * Our library for creating the types generates weird stuff if both are present.
+ * @param specification
+ */
 function cleanupOneOf(specification: OpenAPIV3.Document) {
     if (!specification.components?.schemas) return;
 
@@ -47,6 +57,10 @@ function cleanupOneOf(specification: OpenAPIV3.Document) {
         .forEach((property) => delete property["type"]);
 }
 
+/**
+ * Since everything in the TornAPI is always present, but nullable, put it all in required.
+ * @param schemas
+ */
 function markRequired(schemas: { [p: string]: any } | undefined) {
     if (!schemas) return;
 
