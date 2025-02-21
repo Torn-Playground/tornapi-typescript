@@ -1,0 +1,20 @@
+{
+  "name": "tornapi-typescript",
+  "type": "module",
+  "version": "0.0.2",
+  "scripts": {
+    "generate-types": "tsc && node build/index.js"
+  },
+  "devDependencies": {
+    "@scalar/openapi-types": "^0.1.7",
+    "@types/node": "^22.13.1",
+    "prettier": "^3.5.1",
+    "typeconv": "^2.3.1",
+    "typescript": "^5.7.3"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/index.d.ts",
+    "./dist/openapi.json"
+  ]
+}
