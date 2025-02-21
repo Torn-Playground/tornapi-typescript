@@ -1,5 +1,8 @@
 # TornAPI Typescript
 
+[![NPM Version](https://img.shields.io/npm/v/tornapi-typescript)](https://www.npmjs.com/package/tornapi-typescript)
+[![NPM Downloads](https://img.shields.io/npm/d18m/tornapi-typescript)](https://www.npmjs.com/package/tornapi-typescript)
+
 Automatically generated type definition in Typescript for [torn.com](https://torn.com) API V2.
 
 ## Installation
