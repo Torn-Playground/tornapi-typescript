@@ -23,7 +23,7 @@ jobs:
       - run: echo 'Version = @ ${{ steps.package.outputs.prop }}'
 
   next-sember:
-    needs: check-version
+    needs: read-version
     runs-on: ubuntu-latest
     steps:
       - name: 'Get next minor version'
