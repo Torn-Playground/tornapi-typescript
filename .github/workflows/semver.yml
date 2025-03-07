@@ -1,0 +1,33 @@
+name: Semver
+on:
+  workflow_dispatch:
+    inputs:
+      publish_npm:
+        type: boolean
+        description: Publish to NPM
+        default: true
+
+jobs:
+  read-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.package.outputs.prop }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: notiz-dev/github-action-json-property@v0.2.0
+        id: package
+        with:
+          path: package.json
+          prop_path: "version"
+      - run: echo 'Version = @ ${{ steps.package.outputs.prop }}'
+
+  next-sember:
+    needs: check-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Get next minor version'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ needs.check-version.outputs.version }}
