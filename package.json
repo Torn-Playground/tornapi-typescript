@@ -10,7 +10,7 @@
     "@types/node": "^22.13.1",
     "prettier": "^3.5.3",
     "typeconv": "^2.3.1",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   },
   "types": "./dist/index.d.ts",
   "files": [
