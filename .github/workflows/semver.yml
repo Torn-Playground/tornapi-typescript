@@ -1,11 +1,6 @@
 name: Semver
 on:
   workflow_dispatch:
-    inputs:
-      publish_npm:
-        type: boolean
-        description: Publish to NPM
-        default: true
 
 jobs:
   read-version:
