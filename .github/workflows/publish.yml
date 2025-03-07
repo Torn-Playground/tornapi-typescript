@@ -54,4 +54,4 @@ jobs:
           name: "types"
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
