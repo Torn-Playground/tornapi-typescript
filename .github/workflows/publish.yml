@@ -36,7 +36,7 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ inputs.publish_npm }}
+    if: ${{ inputs.publish-npm }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
