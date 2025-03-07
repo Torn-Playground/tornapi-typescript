@@ -26,3 +26,6 @@ jobs:
         uses: "WyriHaximus/github-action-next-semvers@v1"
         with:
           version: ${{ needs.read-version.outputs.version }}
+      - run: echo 'Next major = @ ${{ steps.semvers.outputs.major }}'
+      - run: echo 'Next minor = @ ${{ steps.semvers.outputs.minor }}'
+      - run: echo 'Next patch = @ ${{ steps.semvers.outputs.patch }}'
