@@ -26,7 +26,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm ci
       - run: npm run generate-types
-      - name: Upload artifacts
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: "package.json"
+          path: "package.json"
+          if-no-files-found: error
+      - name: Upload types
         uses: actions/upload-artifact@v4
         with:
           name: "types"
@@ -38,7 +44,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ inputs.publish-npm }}
     steps:
-      - name: Download artifacts
+      - name: Download package
+        uses: actions/download-artifact@v4
+        with:
+          name: "package.json"
+      - name: Download types
         uses: actions/download-artifact@v4
         with:
           name: "types"
