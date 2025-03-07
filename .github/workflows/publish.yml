@@ -1,0 +1,47 @@
+name: Publish Types
+on:
+  workflow_dispatch:
+    inputs:
+      increase-version:
+        type: boolean
+        description: Increase the version
+        default: true
+      publish-npm:
+        type: boolean
+        description: Publish to NPM
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: "Automated Version Bump"
+        uses: "phips28/gh-action-bump-version@master"
+        if: ${{ inputs.increase-version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm ci
+      - run: npm run generate-types
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: "types"
+          path: "dist/"
+          if-no-files-found: error
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ inputs.publish_npm }}
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: "types"
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
