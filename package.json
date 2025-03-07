@@ -1,7 +1,7 @@
 {
   "name": "tornapi-typescript",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "generate-types": "tsc && node build/index.js"
   },
