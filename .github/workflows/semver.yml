@@ -17,7 +17,7 @@ jobs:
           prop_path: "version"
       - run: echo 'Version = @ ${{ steps.package.outputs.prop }}'
 
-  next-sember:
+  next-semver:
     needs: read-version
     runs-on: ubuntu-latest
     steps:
@@ -25,4 +25,4 @@ jobs:
         id: semvers
         uses: "WyriHaximus/github-action-next-semvers@v1"
         with:
-          version: ${{ needs.check-version.outputs.version }}
+          version: ${{ needs.read-version.outputs.version }}
