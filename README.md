@@ -15,9 +15,7 @@ These types are generated in the following way:
 
 * load [openapi specification](https://www.torn.com/swagger/openapi.json)
 * clean the specification for better types
-  * remove `type` when `allOf` is present, otherwise the specification is not valid
   * remove `type` when `oneOf` is present, for improved types
-  * mark all fields as required, for improved types
 * convert the specification to Typescript definitions using [typeconv](https://github.com/grantila/typeconv)
 * clean the type definitions
   * remove all "[key: string]: any;", because typeconv adds it everywhere for some reason
