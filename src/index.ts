@@ -8,7 +8,6 @@ import * as prettier from "prettier";
 
     const specification: OpenAPIV3.Document = await fetch("https://www.torn.com/swagger/openapi.json").then((r) => r.json());
     // const specification: OpenAPIV3.Document = await fs.readFile("dist/openapi.json", "utf-8").then(r => JSON.parse(r));
-    cleanupOneOf(specification);
 
     await fs.writeFile("dist/openapi.json", JSON.stringify(specification, null, 2));
 
@@ -24,18 +23,3 @@ import * as prettier from "prettier";
 
     await fs.writeFile("dist/index.d.ts", formattedData);
 })();
-
-/**
- * Remove 'type' from schemas that have defined 'oneOf'.
- * Our library for creating the types generates weird stuff if both are present.
- * @param specification
- */
-function cleanupOneOf(specification: OpenAPIV3.Document) {
-    if (!specification.components?.schemas) return;
-
-    Object.values(specification.components.schemas)
-        .filter((schema): schema is OpenAPIV3.SchemaObject => "properties" in schema)
-        .flatMap((schema: OpenAPIV3.SchemaObject) => Object.values(schema.properties!))
-        .filter((property) => "oneOf" in property && "type" in property)
-        .forEach((property) => delete property["type"]);
-}

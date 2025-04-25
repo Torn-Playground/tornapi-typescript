@@ -14,9 +14,7 @@ Automatically generated type definition in TypeScript for [torn.com](https://tor
 These types are generated in the following way:
 
 * load [openapi specification](https://www.torn.com/swagger/openapi.json)
-* clean the specification for better types
-  * remove `type` when `oneOf` is present, for improved types
-* convert the specification to Typescript definitions using [typeconv](https://github.com/grantila/typeconv)
+* convert the specification to TypeScript definitions using [typeconv](https://github.com/grantila/typeconv)
 * clean the type definitions
   * remove all "[key: string]: any;", because typeconv adds it everywhere for some reason
   * remove all empty objects (caused by the above cleaning)
