@@ -3,7 +3,7 @@
 [![NPM Version](https://img.shields.io/npm/v/tornapi-typescript)](https://www.npmjs.com/package/tornapi-typescript)
 [![NPM Downloads](https://img.shields.io/npm/d18m/tornapi-typescript)](https://www.npmjs.com/package/tornapi-typescript)
 
-Automatically generated type definition in Typescript for [torn.com](https://torn.com) API V2.
+Automatically generated type definition in TypeScript for [torn.com](https://torn.com) API V2.
 
 ## Installation
 
@@ -25,4 +25,4 @@ These types are generated in the following way:
 ## Contact
 
 You can join the community in [our Discord server](https://discord.gg/2wb7GKN). There you can discuss anything related
-to the Torn API, or other tools related to Torn. Issues can also be reported there, or as GitHub issue.
+to the Torn API or other tools related to Torn. Issues can also be reported there, or as GitHub issue.
