@@ -44,7 +44,7 @@ jobs:
           npm i
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -a -m 'ci: version bump to ${{steps.version.outputs.prop}}''
+          git commit -a -m 'ci: version bump to ${{steps.version.outputs.prop}}'
           git push
         if: ${{ inputs.spec-version }}
 
