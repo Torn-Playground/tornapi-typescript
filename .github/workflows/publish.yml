@@ -2,9 +2,9 @@ name: Publish Types
 on:
   workflow_dispatch:
     inputs:
-      increase-version:
+      spec-version:
         type: boolean
-        description: Increase the version
+        description: Use and write the version specified in the API spec file
         default: true
       publish-npm:
         type: boolean
@@ -22,12 +22,6 @@ jobs:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
       
-      - name: "Automated Version Bump"
-        uses: "phips28/gh-action-bump-version@master"
-        if: ${{ inputs.increase-version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
       - run: npm ci
       
       - run: npm run generate-types
@@ -35,11 +29,16 @@ jobs:
       - name: get version
         id: version
         uses: kekedaine/github-action-json-property-by-lodash@0.2.0
+        if: ${{ inputs.spec-version }}
         with:
           path: dist/openapi.json
           prop_path: "info.version"
 
-      - run: echo ${{steps.version.outputs.prop}}
+      - name: Write spec version to package.json
+        uses: jaywcjlove/github-action-package@v2.0.0
+        if: ${{ inputs.spec-version }}
+        with:
+          version: ${{steps.version.outputs.prop}}
       
       - run: npm publish
         if: ${{ inputs.publish-npm }}
