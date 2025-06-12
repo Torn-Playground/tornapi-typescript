@@ -39,7 +39,15 @@ jobs:
         if: ${{ inputs.spec-version }}
         with:
           version: ${{steps.version.outputs.prop}}
-      
+
+      - run: |
+          npm i
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -a -m 'ci: version bump to ${{steps.version.outputs.prop}}''
+          git push
+        if: ${{ inputs.spec-version }}
+
       - run: npm publish
         if: ${{ inputs.publish-npm }}
         env:
