@@ -16,17 +16,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
+      
       - name: "Automated Version Bump"
         uses: "phips28/gh-action-bump-version@master"
         if: ${{ inputs.increase-version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
       - run: npm ci
+      
       - run: npm run generate-types
+      
+      - name: get version
+        id: version
+        uses: kekedaine/github-action-json-property-by-lodash@0.2.0
+        with:
+          path: dist/openapi.json
+          prop_path: "info.version"
+
+      - run: echo ${{steps.version.outputs.prop}}
+      
       - run: npm publish
         if: ${{ inputs.publish-npm }}
         env:
