@@ -10,6 +10,7 @@ on:
         type: boolean
         description: Publish to NPM
         default: true
+  workflow_call:
 
 jobs:
   build:
