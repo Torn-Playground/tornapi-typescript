@@ -38,3 +38,6 @@ jobs:
     needs: check-version
     if: ${{needs.check-version.outputs.version != needs.check-version.outputs.spec-version}}
     uses: ./.github/workflows/publish.yml
+    with:
+      spec-version: true
+      publish-npm: true
