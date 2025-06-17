@@ -1,6 +1,8 @@
 name: Check Version
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "55 */4 * * *"
 
 jobs:
   check-version:
