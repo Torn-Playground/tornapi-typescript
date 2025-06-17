@@ -11,14 +11,15 @@ on:
         description: Publish to NPM
         default: true
   workflow_call:
-    spec-version:
-      type: boolean
-      description: Use and write the version specified in the API spec file
-      default: true
-    publish-npm:
-      type: boolean
-      description: Publish to NPM
-      default: true
+    inputs:
+      spec-version:
+        type: boolean
+        description: Use and write the version specified in the API spec file
+        default: true
+      publish-npm:
+        type: boolean
+        description: Publish to NPM
+        default: true
 
 jobs:
   build:
