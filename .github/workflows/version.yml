@@ -1,0 +1,42 @@
+name: Check Version
+on:
+  workflow_dispatch:
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      spec-version: ${{ steps.spec-version.outputs.prop }}
+      version: ${{ steps.version.outputs.prop }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+      
+      - run: npm ci
+
+      - run: npm run generate-types
+
+      - name: get spec version
+        id: spec-version
+        uses: kekedaine/github-action-json-property-by-lodash@0.2.0
+        if: ${{ inputs.spec-version }}
+        with:
+          path: dist/openapi.json
+          prop_path: "info.version"
+
+      - name: get version
+        id: version
+        uses: kekedaine/github-action-json-property-by-lodash@0.2.0
+        if: ${{ inputs.spec-version }}
+        with:
+          path: package.json
+          prop_path: "version"
+
+  trigger-publish:
+    needs: check-version
+    if: ${{needs.check-version.outputs.version != needs.check-version.outputs.spec-version}}
+    uses: ./.github/workflows/publish.yml
