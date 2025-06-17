@@ -23,7 +23,6 @@ jobs:
       - name: get spec version
         id: spec-version
         uses: kekedaine/github-action-json-property-by-lodash@0.2.0
-        if: ${{ inputs.spec-version }}
         with:
           path: dist/openapi.json
           prop_path: "info.version"
@@ -31,7 +30,6 @@ jobs:
       - name: get version
         id: version
         uses: kekedaine/github-action-json-property-by-lodash@0.2.0
-        if: ${{ inputs.spec-version }}
         with:
           path: package.json
           prop_path: "version"
