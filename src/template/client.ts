@@ -20,12 +20,17 @@ export type SectionV2 = keyof SectionsV2Map;
 export type SelectionV1<Sec extends SectionV1> = keyof SectionsV1Map[Sec]["selections"];
 export type SelectionV2<Sec extends SectionV2> = keyof SectionsV2Map[Sec]["selections"];
 
-export type ParamsV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map[Sec]["selections"]> = SectionsV1Map[Sec]["selections"][Sel] extends { params: any }
+export type ParamsV1<Sec extends SectionV1, Sel extends SelectionV1<Sec>> = SectionsV1Map[Sec]["selections"][Sel] extends {
+    params: any;
+}
     ? SectionsV1Map[Sec]["selections"][Sel]["params"]
     : never;
-export type ParamsV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec]["selections"]> = SectionsV2Map[Sec]["selections"][Sel] extends { params: any }
+export type ParamsV2<Sec extends SectionV2, Sel extends SelectionV2<Sec>> = SectionsV2Map[Sec]["selections"][Sel] extends {
+    params: any;
+}
     ? SectionsV2Map[Sec]["selections"][Sel]["params"]
     : never;
+
 export type GetArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map[Sec]["selections"]> =
     ParamsV1<Sec, Sel> extends never
         ? {
