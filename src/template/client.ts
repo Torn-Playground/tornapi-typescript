@@ -40,6 +40,7 @@ export type GetArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map
               params?: never;
               key: string;
               comment?: string;
+              timeout?: number;
           }
         : {
               section: Sec;
@@ -48,6 +49,7 @@ export type GetArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map
               params?: Partial<Record<ParamsV1<Sec, Sel>, string>>;
               key: string;
               comment?: string;
+              timeout?: number;
           };
 export type GetArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec]["selections"]> =
     ParamsV2<Sec, Sel> extends never
@@ -58,6 +60,7 @@ export type GetArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map
               params?: never;
               key: string;
               comment?: string;
+              timeout?: number;
           }
         : {
               section: Sec;
@@ -66,6 +69,7 @@ export type GetArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map
               params?: Partial<Record<ParamsV2<Sec, Sel>, string>>;
               key: string;
               comment?: string;
+              timeout?: number;
           };
 
 export type GetResponseSuccessV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map[Sec]["selections"]> = SectionsV1Map[Sec]["selections"][Sel] extends {
@@ -95,13 +99,38 @@ export type CacheV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec][
 
 type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
 
-export interface HTTPClient {
-    getJson(url: URL): Promise<any>;
+export type HTTPClientCapabilities = "abort";
+
+export abstract class HTTPClient {
+    abstract getJson(url: URL): Promise<any>;
+
+    canAbort(): this is AbortableHTTPClient {
+        return false;
+    }
 }
 
-export class FetchHTTPClient implements HTTPClient {
-    async getJson(url: URL): Promise<any> {
-        const response = await fetch(url);
+export abstract class AbortableHTTPClient extends HTTPClient {
+    abstract getJson(url: URL): Promise<any>;
+    abstract getJson(url: URL, timeout: number): Promise<any>;
+    abstract getJson(url: URL, timeout: number | undefined): Promise<any>;
+
+    canAbort(): this is AbortableHTTPClient {
+        return true;
+    }
+}
+
+export class FetchHTTPClient extends AbortableHTTPClient {
+    async getJson(url: URL, timeout: number | undefined = undefined): Promise<any> {
+        let response: Response;
+        if (timeout !== undefined) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+            response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+        } else {
+            response = await fetch(url);
+        }
 
         return await response.json();
     }
@@ -110,15 +139,18 @@ export class FetchHTTPClient implements HTTPClient {
 interface ClientOptions {
     httpClient?: HTTPClient;
     defaultComment?: string;
+    defaultTimeout?: number;
 }
 
 export class TornApiClient {
     private readonly httpClient: HTTPClient;
     private readonly defaultComment?: string;
+    private readonly defaultTimeout?: number;
 
     constructor(options: ClientOptions = {}) {
         this.httpClient = options.httpClient ?? new FetchHTTPClient();
         this.defaultComment = options.defaultComment;
+        this.defaultTimeout = options.defaultTimeout;
     }
 
     async getV1<Sec extends SectionV1, Sel extends SelectionV1<Sec>>({
@@ -130,6 +162,7 @@ export class TornApiClient {
         comment,
         cache,
         expiry,
+        timeout,
     }: GetArgumentV1<Sec, Sel> & {
         cache?: CacheV1<Sec, Sel>;
         expiry?: number;
@@ -146,7 +179,11 @@ export class TornApiClient {
         const url = new URL(`https://api.torn.com/${section}/${id ?? ""}`);
         this.populateUrl(url, key, (selections ?? []) as string[], comment, params ?? {});
 
-        return this.httpClient.getJson(url).then(addToCache).catch(this.handleError);
+        if (this.httpClient.canAbort() && typeof timeout === "number") {
+            return (this.httpClient as AbortableHTTPClient).getJson(url, timeout).then(addToCache).catch(this.handleError);
+        } else {
+            return this.httpClient.getJson(url).then(addToCache).catch(this.handleError);
+        }
 
         function addToCache(response: GetResponseV1<Sec, Sel>): GetResponseV1<Sec, Sel> {
             if ("error" in (response as any)) return response;
@@ -174,6 +211,7 @@ export class TornApiClient {
         comment,
         cache,
         expiry,
+        timeout,
     }: GetArgumentV2<Sec, Sel> & {
         cache?: CacheV2<Sec, Sel>;
         expiry?: number;
@@ -190,7 +228,11 @@ export class TornApiClient {
         const url = new URL(`https://api.torn.com/v2/${section}/${id ?? ""}`);
         this.populateUrl(url, key, (selections ?? []) as string[], comment, params ?? {});
 
-        return this.httpClient.getJson(url).then(addToCache).catch(this.handleError);
+        if (this.httpClient.canAbort() && typeof timeout === "number") {
+            return (this.httpClient as AbortableHTTPClient).getJson(url, timeout).then(addToCache).catch(this.handleError);
+        } else {
+            return this.httpClient.getJson(url).then(addToCache).catch(this.handleError);
+        }
 
         function addToCache(response: GetResponseV2<Sec, Sel>): GetResponseV2<Sec, Sel> {
             if ("error" in (response as any)) return response;
