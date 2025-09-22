@@ -282,25 +282,3 @@ export class TornApiClient {
             .forEach(([key, value]) => url.searchParams.set(key, value));
     }
 }
-
-const DEFAULT_CLIENT = new TornApiClient();
-
-/**
- * @deprecated Move to TornApiClient instead of using this. Will be removed in an upcoming version.
- * @see TornApiClient
- */
-export async function tornApiGetV1<Sec extends SectionV1, Sel extends SelectionV1<Sec>>(
-    options: GetArgumentV1<Sec, Sel> & { cache?: CacheV1<Sec, Sel>; expiry?: number },
-): Promise<GetResponseV1<Sec, Sel>> {
-    return DEFAULT_CLIENT.getV1(options);
-}
-
-/**
- * @deprecated Move to TornApiClient instead of using this. Will be removed in an upcoming version.
- * @see TornApiClient
- */
-export async function tornApiGetV2<Sec extends SectionV2, Sel extends SelectionV2<Sec>>(
-    options: GetArgumentV2<Sec, Sel> & { cache?: CacheV2<Sec, Sel>; expiry?: number },
-): Promise<GetResponseV2<Sec, Sel>> {
-    return DEFAULT_CLIENT.getV2(options);
-}
