@@ -40,7 +40,6 @@ export type GetArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map
               params?: never;
               key: string;
               comment?: string;
-              timeout?: number;
           }
         : {
               section: Sec;
@@ -49,7 +48,6 @@ export type GetArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map
               params?: Partial<Record<ParamsV1<Sec, Sel>, string>>;
               key: string;
               comment?: string;
-              timeout?: number;
           };
 export type GetArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec]["selections"]> =
     ParamsV2<Sec, Sel> extends never
@@ -60,7 +58,6 @@ export type GetArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map
               params?: never;
               key: string;
               comment?: string;
-              timeout?: number;
           }
         : {
               section: Sec;
@@ -69,8 +66,12 @@ export type GetArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map
               params?: Partial<Record<ParamsV2<Sec, Sel>, string>>;
               key: string;
               comment?: string;
-              timeout?: number;
           };
+export type AdditionalArguments<CacheType> =  {
+    cache?: CacheType;
+    expiry?: number;
+    timeout?: number;
+}
 
 export type GetResponseSuccessV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map[Sec]["selections"]> = SectionsV1Map[Sec]["selections"][Sel] extends {
     response: any;
@@ -163,10 +164,7 @@ export class TornApiClient {
         cache,
         expiry,
         timeout,
-    }: GetArgumentV1<Sec, Sel> & {
-        cache?: CacheV1<Sec, Sel>;
-        expiry?: number;
-    }): Promise<GetResponseV1<Sec, Sel>> {
+    }: GetArgumentV1<Sec, Sel> & AdditionalArguments<CacheV1<Sec, Sel>>): Promise<GetResponseV1<Sec, Sel>> {
         const cached = await cache?.get({
             section,
             selections,
@@ -212,10 +210,7 @@ export class TornApiClient {
         cache,
         expiry,
         timeout,
-    }: GetArgumentV2<Sec, Sel> & {
-        cache?: CacheV2<Sec, Sel>;
-        expiry?: number;
-    }): Promise<GetResponseV2<Sec, Sel>> {
+    }: GetArgumentV2<Sec, Sel> & AdditionalArguments<CacheV2<Sec, Sel>>): Promise<GetResponseV2<Sec, Sel>> {
         const cached = await cache?.get({
             section,
             selections,
