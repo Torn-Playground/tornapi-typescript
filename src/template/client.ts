@@ -31,6 +31,15 @@ export type ParamsV2<Sec extends SectionV2, Sel extends SelectionV2<Sec>> = Sect
     ? SectionsV2Map[Sec]["selections"][Sel]["params"]
     : never;
 
+export type CommonArgument = {
+    id?: string | number;
+    key: string;
+    comment?: string;
+};
+export type CommonArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map[Sec]["selections"]> = {
+    section: Sec;
+    selections?: Sel[];
+} & CommonArgument;
 export type GetArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map[Sec]["selections"]> =
     ParamsV1<Sec, Sel> extends never
         ? {
@@ -49,29 +58,23 @@ export type GetArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map
               key: string;
               comment?: string;
           };
+export type CommonArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec]["selections"]> = {
+    section: Sec;
+    selections?: Sel[];
+} & CommonArgument;
 export type GetArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec]["selections"]> =
     ParamsV2<Sec, Sel> extends never
         ? {
-              section: Sec;
-              selections?: Sel[];
-              id?: string | number;
               params?: never;
-              key: string;
-              comment?: string;
-          }
+          } & CommonArgumentV2<Sec, Sel>
         : {
-              section: Sec;
-              selections?: Sel[];
-              id?: string | number;
               params?: Partial<Record<ParamsV2<Sec, Sel>, string>>;
-              key: string;
-              comment?: string;
-          };
-export type AdditionalArguments<CacheType> =  {
+          } & CommonArgumentV2<Sec, Sel>;
+export type AdditionalArguments<CacheType> = {
     cache?: CacheType;
     expiry?: number;
     timeout?: number;
-}
+};
 
 export type GetResponseSuccessV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map[Sec]["selections"]> = SectionsV1Map[Sec]["selections"][Sel] extends {
     response: any;
