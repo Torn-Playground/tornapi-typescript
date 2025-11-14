@@ -104,7 +104,7 @@ export type CacheV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec][
 type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
 
 export abstract class HTTPClient {
-    abstract getJson(url: URL): Promise<any>;
+    abstract getJson(url: string): Promise<any>;
 
     canAbort(): this is AbortableHTTPClient {
         return false;
@@ -112,9 +112,9 @@ export abstract class HTTPClient {
 }
 
 export abstract class AbortableHTTPClient extends HTTPClient {
-    abstract getJson(url: URL): Promise<any>;
-    abstract getJson(url: URL, timeout: number): Promise<any>;
-    abstract getJson(url: URL, timeout: number | undefined): Promise<any>;
+    abstract getJson(url: string): Promise<any>;
+    abstract getJson(url: string, timeout: number): Promise<any>;
+    abstract getJson(url: string, timeout: number | undefined): Promise<any>;
 
     canAbort(): this is AbortableHTTPClient {
         return true;
@@ -122,7 +122,7 @@ export abstract class AbortableHTTPClient extends HTTPClient {
 }
 
 export class FetchHTTPClient extends AbortableHTTPClient {
-    async getJson(url: URL, timeout: number | undefined = undefined): Promise<any> {
+    async getJson(url: string, timeout: number | undefined = undefined): Promise<any> {
         let response: Response;
         if (timeout !== undefined) {
             const controller = new AbortController();
@@ -175,8 +175,8 @@ export class TornApiClient {
         } as GetArgumentV1<Sec, Sel>);
         if (cached) return cached;
 
-        const url = new URL(`https://api.torn.com/${section}/${id ?? ""}`);
-        this.populateUrl(url, key, (selections ?? []) as string[], comment, params ?? {});
+        let url = `https://api.torn.com/${section}/${id ?? ""}`;
+        url = this.populateUrl(url, key, (selections ?? []) as string[], comment, params ?? {});
 
         if (this.httpClient.canAbort() && typeof timeout === "number") {
             return (this.httpClient as AbortableHTTPClient).getJson(url, timeout).then(addToCache).catch(this.handleError);
@@ -221,8 +221,8 @@ export class TornApiClient {
         } as GetArgumentV2<Sec, Sel>);
         if (cached) return cached;
 
-        const url = new URL(`https://api.torn.com/v2/${section}/${id ?? ""}`);
-        this.populateUrl(url, key, (selections ?? []) as string[], comment, params ?? {});
+        let url = `https://api.torn.com/v2/${section}/${id ?? ""}`;
+        url = this.populateUrl(url, key, (selections ?? []) as string[], comment, params ?? {});
 
         if (this.httpClient.canAbort() && typeof timeout === "number") {
             return (this.httpClient as AbortableHTTPClient).getJson(url, timeout).then(addToCache).catch(this.handleError);
@@ -265,7 +265,7 @@ export class TornApiClient {
         }
     }
 
-    private populateUrl(url: URL, key: string, selections: string[], comment: string | undefined, params: Record<string, string | undefined>): void {
+    private populateUrl(url: string, key: string, selections: string[], comment: string | undefined, params: Record<string, string | undefined>): string {
         const allParams: Record<string, string | undefined> = {
             key,
             comment: comment ?? this.defaultComment,
@@ -273,8 +273,11 @@ export class TornApiClient {
             ...params,
         };
 
-        Object.entries(allParams)
+        const query = Object.entries(allParams)
             .filter<[string, string]>((entry): entry is [string, string] => !!entry[1])
-            .forEach(([key, value]) => url.searchParams.set(key, value));
+            .map(([key, value]) => `${key}=${value}`)
+            .join("&");
+
+        return `${url}?${query}`
     }
 }
