@@ -23,7 +23,7 @@ const EXCLUDED_PARAMS = ["comment", "key"];
     });
     await fs.writeFile("dist/index.ts", allCode);
 
-    const compiledCode = typescript.transpile(allCode, { target: ScriptTarget.ES2020, });
+    const compiledCode = typescript.transpile(allCode, { target: ScriptTarget.ESNext });
     await fs.writeFile("dist/index.js", compiledCode);
 
     const compiledDeclarations = typescript.transpileDeclaration(allCode, {}).outputText;
