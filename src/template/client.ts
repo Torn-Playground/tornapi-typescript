@@ -103,8 +103,6 @@ export type CacheV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec][
 
 type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
 
-export type HTTPClientCapabilities = "abort";
-
 export abstract class HTTPClient {
     abstract getJson(url: URL): Promise<any>;
 
