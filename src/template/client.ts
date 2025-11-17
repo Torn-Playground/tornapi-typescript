@@ -43,21 +43,11 @@ export type CommonArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1
 export type GetArgumentV1<Sec extends SectionV1, Sel extends keyof SectionsV1Map[Sec]["selections"]> =
     ParamsV1<Sec, Sel> extends never
         ? {
-              section: Sec;
-              selections?: Sel[];
-              id?: string | number;
               params?: never;
-              key: string;
-              comment?: string;
-          }
+          } & CommonArgumentV1<Sec, Sel>
         : {
-              section: Sec;
-              selections?: Sel[];
-              id?: string | number;
               params?: Partial<Record<ParamsV1<Sec, Sel>, string>>;
-              key: string;
-              comment?: string;
-          };
+          } & CommonArgumentV1<Sec, Sel>;
 export type CommonArgumentV2<Sec extends SectionV2, Sel extends keyof SectionsV2Map[Sec]["selections"]> = {
     section: Sec;
     selections?: Sel[];
