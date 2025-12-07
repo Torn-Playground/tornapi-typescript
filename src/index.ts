@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from "@scalar/openapi-types";
-import fs from "fs/promises";
+import fs from "node:fs/promises";
 import { getOpenApiReader, getTypeScriptWriter, makeConverter } from "typeconv";
 import * as prettier from "prettier";
 import typescript, { ScriptTarget } from "typescript";
