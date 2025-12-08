@@ -7,7 +7,8 @@ import typescript, { ScriptTarget } from "typescript";
 const EXCLUDED_PARAMS = ["comment", "key"];
 
 (async () => {
-    await fs.mkdir("dist").catch(() => {});
+    await fs.mkdir("dist").catch(() => {
+    });
 
     const specification: OpenAPIV3.Document = await fetch("https://www.torn.com/swagger/openapi.json").then((r) => r.json());
     // const specification: OpenAPIV3.Document = await fs.readFile("dist/openapi.json", "utf-8").then(r => JSON.parse(r));
@@ -158,6 +159,10 @@ function buildResponseType(schema: Record<string, any>, structures: Record<strin
     function schemaToType([name, schema]: [string, Record<string, any>]): string {
         if (name.startsWith("<") && name.endsWith(">")) name = `[${name.slice(1, -1).replaceAll(/[_\-\s]/g, "_")}: string]`;
         else if (!name.startsWith(`"`) && !name.startsWith("[")) name = `"${name}"`;
+
+        if (schema.optional) {
+            name += "?";
+        }
 
         if (typeof schema.type === "string") {
             switch (schema.type.toLowerCase()) {
