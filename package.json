@@ -7,7 +7,7 @@
   },
   "devDependencies": {
     "@scalar/openapi-types": "^0.5.3",
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.10.6",
     "prettier": "^3.7.4",
     "typeconv": "^2.3.1",
     "typescript": "^5.9.3"
