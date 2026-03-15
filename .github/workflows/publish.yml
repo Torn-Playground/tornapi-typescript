@@ -45,7 +45,7 @@ jobs:
           prop_path: "info.version"
 
       - name: Write spec version to package.json
-        uses: jaywcjlove/github-action-package@v2.0.0
+        uses: jaywcjlove/github-action-package@v2.1.0
         if: ${{ inputs.spec-version }}
         with:
           version: ${{steps.version.outputs.prop}}
