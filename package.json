@@ -6,7 +6,7 @@
     "generate-types": "tsc && node build/index.js"
   },
   "devDependencies": {
-    "@scalar/openapi-types": "^0.6.1",
+    "@scalar/openapi-types": "^0.7.0",
     "@types/node": "^24.12.2",
     "prettier": "^3.8.1",
     "typeconv": "^2.3.1",
