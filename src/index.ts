@@ -164,41 +164,56 @@ function buildResponseType(schema: Record<string, any>, structures: Record<strin
             name += "?";
         }
 
+        let typeStr: string;
+
         if (typeof schema.type === "string") {
             switch (schema.type.toLowerCase()) {
                 case "array of strings":
-                    return `${name}: string[];`;
+                    typeStr = "string[]";
+                    break;
                 case "boolean":
-                    return `${name}: boolean;`;
+                    typeStr = "boolean";
+                    break;
                 case "array of integers":
                 case "array of epoch timestamp (in seconds)":
-                    return `${name}: number[];`;
+                    typeStr = "number[]";
+                    break;
                 case "epoch timestamp (in seconds)":
                 case "integer":
                 case "number (with floating point)":
                 case "integer or number (with floating point)":
-                    return `${name}: number;`;
+                    typeStr = "number";
+                    break;
                 case "numberboolean (0 for false, 1 for true)":
-                    return `${name}: 0 | 1;`;
+                    typeStr = "0 | 1";
+                    break;
                 case "1 or 1.25":
-                    return `${name}: 1 | 1.25;`;
+                    typeStr = "1 | 1.25";
+                    break;
                 case "1 or 1.5":
-                    return `${name}: 1 | 1.5;`;
+                    typeStr = "1 | 1.5";
+                    break;
                 case "1 or 2":
-                    return `${name}: 1 | 2;`;
+                    typeStr = "1 | 2";
+                    break;
                 case "string":
                 case "date (yyyy-dd-mm hh:mm:ss)":
                 case "date (yyyy-mm-dd hh:mm:ss)":
-                    return `${name}: string;`;
+                    typeStr = "string";
+                    break;
                 case "integer + string":
-                    return `${name}: number | string;`;
+                    typeStr = "number | string";
+                    break;
                 case "integer + (empty) string":
-                    return `${name}: number | "";`;
+                    typeStr = "number | \"\"";
+                    break;
                 case "key-value map":
-                    return `${name}: Record<string, any>;`;
+                    typeStr = "Record<string, any>";
+                    break;
                 case "unknown, let us know what it looks like.":
                 case "unknown":
-                    return `${name}: unknown;`;
+                    typeStr = "unknown";
+                    break;
                 default:
                     throw new Error(`Unknown type: ${schema.type}`);
             }
@@ -208,9 +223,9 @@ function buildResponseType(schema: Record<string, any>, structures: Record<strin
                 throw new Error("Structure not found", {
                     cause: { schema, structures },
                 });
-            if (schema.structure.type === "object") return schemaToType([name, structure.schema]);
+            if (schema.structure.type === "object") typeStr = buildResponseType(structure.schema, structures);
             else if (schema.structure.type === "enum") {
-                return `${name}: ${structure.values.map((v: string) => `"${v}"`).join(" | ")};`;
+                typeStr = structure.values.map((v: string) => `"${v}"`).join(" | ");
             } else
                 throw new Error(`Unsupported structure type: ${schema.structure.type}`, {
                     cause: {
@@ -219,8 +234,22 @@ function buildResponseType(schema: Record<string, any>, structures: Record<strin
                     },
                 });
         } else {
-            return `${name}: ${buildResponseType(schema, structures)};`;
+            typeStr = buildResponseType(schema, structures);
         }
+
+        if (schema.array) {
+            if (typeStr.includes("|") || typeStr.startsWith("{")) {
+                typeStr = `(${typeStr})[]`;
+            } else {
+                typeStr = `${typeStr}[]`;
+            }
+        }
+
+        if (schema.nullable) {
+            typeStr = `${typeStr} | null`;
+        }
+
+        return `${name}: ${typeStr};`;
     }
 }
 
