@@ -21,6 +21,10 @@ on:
         description: Publish to NPM
         default: true
 
+permissions:
+  id-token: write
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
