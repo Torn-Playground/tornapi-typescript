@@ -1,68 +1,68 @@
 name: Publish Types
 on:
-  workflow_dispatch:
-    inputs:
-      spec-version:
-        type: boolean
-        description: Use and write the version specified in the API spec file
-        default: true
-      publish-npm:
-        type: boolean
-        description: Publish to NPM
-        default: true
-  workflow_call:
-    inputs:
-      spec-version:
-        type: boolean
-        description: Use and write the version specified in the API spec file
-        default: true
-      publish-npm:
-        type: boolean
-        description: Publish to NPM
-        default: true
+    workflow_dispatch:
+        inputs:
+            spec-version:
+                type: boolean
+                description: Use and write the version specified in the API spec file
+                default: true
+            publish-npm:
+                type: boolean
+                description: Publish to NPM
+                default: true
+    workflow_call:
+        inputs:
+            spec-version:
+                type: boolean
+                description: Use and write the version specified in the API spec file
+                default: true
+            publish-npm:
+                type: boolean
+                description: Publish to NPM
+                default: true
 
 permissions:
-  id-token: write
-  contents: write
+    id-token: write
+    contents: write
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24.15.0
-          registry-url: "https://registry.npmjs.org"
-      
-      - run: npm ci
-      
-      - run: npm run generate-types
-      
-      - name: get version
-        id: version
-        uses: kekedaine/github-action-json-property-by-lodash@0.2.0
-        if: ${{ inputs.spec-version }}
-        with:
-          path: dist/openapi.json
-          prop_path: "info.version"
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
 
-      - name: Write spec version to package.json
-        uses: jaywcjlove/github-action-package@v2.1.0
-        if: ${{ inputs.spec-version }}
-        with:
-          version: ${{steps.version.outputs.prop}}
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 24.15.0
+                  registry-url: "https://registry.npmjs.org"
 
-      - run: |
-          npm i
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -a -m 'ci: version bump to ${{steps.version.outputs.prop}}'
-        if: ${{ inputs.spec-version }}
+            - run: npm ci
 
-      - run: npm publish
-        if: ${{ inputs.publish-npm }}
+            - run: npm run generate-types
 
-      - run:  git push
-        if: ${{ inputs.spec-version }}
+            - name: get version
+              id: version
+              uses: kekedaine/github-action-json-property-by-lodash@0.2.0
+              if: ${{ inputs.spec-version }}
+              with:
+                  path: dist/openapi.json
+                  prop_path: "info.version"
+
+            - name: Write spec version to package.json
+              uses: jaywcjlove/github-action-package@v2.1.0
+              if: ${{ inputs.spec-version }}
+              with:
+                  version: ${{steps.version.outputs.prop}}
+
+            - run: |
+                  npm i
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                  git commit -a -m 'ci: version bump to ${{steps.version.outputs.prop}}'
+              if: ${{ inputs.spec-version }}
+
+            - run: npm publish
+              if: ${{ inputs.publish-npm }}
+
+            - run: git push
+              if: ${{ inputs.spec-version }}

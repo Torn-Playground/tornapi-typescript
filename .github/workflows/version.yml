@@ -1,46 +1,46 @@
 name: Check Version
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "55 */4 * * *"
+    workflow_dispatch:
+    schedule:
+        - cron: "55 */4 * * *"
 
 jobs:
-  check-version:
-    runs-on: ubuntu-latest
-    outputs:
-      spec-version: ${{ steps.spec-version.outputs.prop }}
-      version: ${{ steps.version.outputs.prop }}
-    steps:
-      - uses: actions/checkout@v6
-      
-      - uses: actions/setup-node@v6
+    check-version:
+        runs-on: ubuntu-latest
+        outputs:
+            spec-version: ${{ steps.spec-version.outputs.prop }}
+            version: ${{ steps.version.outputs.prop }}
+        steps:
+            - uses: actions/checkout@v6
+
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 24.15.0
+                  registry-url: "https://registry.npmjs.org"
+
+            - run: npm ci
+
+            - run: npm run generate-types
+
+            - name: get spec version
+              id: spec-version
+              uses: kekedaine/github-action-json-property-by-lodash@0.2.0
+              with:
+                  path: dist/openapi.json
+                  prop_path: "info.version"
+
+            - name: get version
+              id: version
+              uses: kekedaine/github-action-json-property-by-lodash@0.2.0
+              with:
+                  path: package.json
+                  prop_path: "version"
+
+    trigger-publish:
+        needs: check-version
+        if: ${{needs.check-version.outputs.version != needs.check-version.outputs.spec-version}}
+        uses: ./.github/workflows/publish.yml
         with:
-          node-version: 24.15.0
-          registry-url: "https://registry.npmjs.org"
-      
-      - run: npm ci
-
-      - run: npm run generate-types
-
-      - name: get spec version
-        id: spec-version
-        uses: kekedaine/github-action-json-property-by-lodash@0.2.0
-        with:
-          path: dist/openapi.json
-          prop_path: "info.version"
-
-      - name: get version
-        id: version
-        uses: kekedaine/github-action-json-property-by-lodash@0.2.0
-        with:
-          path: package.json
-          prop_path: "version"
-
-  trigger-publish:
-    needs: check-version
-    if: ${{needs.check-version.outputs.version != needs.check-version.outputs.spec-version}}
-    uses: ./.github/workflows/publish.yml
-    with:
-      spec-version: true
-      publish-npm: true
-    secrets: inherit
+            spec-version: true
+            publish-npm: true
+        secrets: inherit

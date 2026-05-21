@@ -2,27 +2,27 @@
 name: Testing
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+    pull_request:
+    workflow_dispatch:
 
 jobs:
-  run-build:
-    runs-on: ubuntu-latest
+    run-build:
+        runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
+        permissions:
+            contents: read
+            packages: read
+            statuses: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v6
 
-      - name: Installing dependencies
-        run: npm i --ignore-scripts
+            - name: Installing dependencies
+              run: npm i --ignore-scripts
 
-      - name: Generate Types
-        run: npm run generate-types
+            - name: Generate Types
+              run: npm run generate-types

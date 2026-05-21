@@ -268,6 +268,6 @@ export class TornApiClient {
             .map(([key, value]) => `${key}=${value}`)
             .join("&");
 
-        return `${url}?${query}`
+        return `${url}?${query}`;
     }
 }

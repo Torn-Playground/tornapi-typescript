@@ -7,8 +7,7 @@ import typescript, { ScriptTarget } from "typescript";
 const EXCLUDED_PARAMS = ["comment", "key"];
 
 (async () => {
-    await fs.mkdir("dist").catch(() => {
-    });
+    await fs.mkdir("dist").catch(() => {});
 
     const specification: OpenAPIV3.Document = await fetch("https://www.torn.com/swagger/openapi.json").then((r) => r.json());
     // const specification: OpenAPIV3.Document = await fs.readFile("dist/openapi.json", "utf-8").then(r => JSON.parse(r));
@@ -205,7 +204,7 @@ function buildResponseType(schema: Record<string, any>, structures: Record<strin
                     typeStr = "number | string";
                     break;
                 case "integer + (empty) string":
-                    typeStr = "number | \"\"";
+                    typeStr = 'number | ""';
                     break;
                 case "key-value map":
                     typeStr = "Record<string, any>";

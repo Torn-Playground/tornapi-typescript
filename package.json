@@ -1,23 +1,23 @@
 {
-  "name": "tornapi-typescript",
-  "type": "module",
-  "version": "5.8.1",
-  "scripts": {
-    "generate-types": "tsc && node build/index.js"
-  },
-  "devDependencies": {
-    "@scalar/openapi-types": "^0.9.0",
-    "@types/node": "^25.9.1",
-    "prettier": "^3.8.3",
-    "typeconv": "^2.3.1",
-    "typescript": "^6.0.3"
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "./dist/index.ts",
-    "./dist/index.js",
-    "./dist/index.d.ts",
-    "./dist/openapi.json"
-  ]
+    "name": "tornapi-typescript",
+    "type": "module",
+    "version": "5.8.1",
+    "scripts": {
+        "generate-types": "tsc && node build/index.js"
+    },
+    "devDependencies": {
+        "@scalar/openapi-types": "^0.9.0",
+        "@types/node": "^25.9.1",
+        "prettier": "^3.8.3",
+        "typeconv": "^2.3.1",
+        "typescript": "^6.0.3"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "./dist/index.ts",
+        "./dist/index.js",
+        "./dist/index.d.ts",
+        "./dist/openapi.json"
+    ]
 }
