@@ -37,10 +37,13 @@ jobs:
                   prop_path: "version"
 
     trigger-publish:
+        runs-on: ubuntu-latest
         needs: check-version
         if: ${{needs.check-version.outputs.version != needs.check-version.outputs.spec-version}}
-        uses: ./.github/workflows/publish.yml
-        with:
-            spec-version: true
-            publish-npm: true
-        secrets: inherit
+        steps:
+            - name: Workflow Dispatch
+              uses: benc-uk/workflow-dispatch@v1.3.1
+              with:
+                  workflow: publish.yml
+                  wait-for-completion: true
+        
