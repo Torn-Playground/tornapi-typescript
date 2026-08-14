@@ -29,12 +29,18 @@ jobs:
                   path: dist/openapi.json
                   prop_path: "info.version"
 
+            - name: Show spec version
+              run: 'echo "Spec version: ${{ steps.spec-version.outputs.prop }}"'
+
             - name: get version
               id: version
               uses: kekedaine/github-action-json-property-by-lodash@0.2.0
               with:
                   path: package.json
                   prop_path: "version"
+
+            - name: Show package version
+              run: 'echo "Package version: ${{ steps.version.outputs.prop }}"'
 
     trigger-publish:
         runs-on: ubuntu-latest
