@@ -9,7 +9,7 @@
     "generate-types": "tsc && node build/index.js"
   },
   "devDependencies": {
-    "@scalar/openapi-types": "^0.9.4",
+    "@scalar/openapi-types": "^0.9.5",
     "@types/node": "^25.9.5",
     "prettier": "^3.9.6",
     "typeconv": "^2.3.1",
