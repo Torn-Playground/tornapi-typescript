@@ -1,7 +1,7 @@
 {
   "name": "tornapi-typescript",
   "type": "module",
-  "version": "6.15.2",
+  "version": "6.15.4",
   "repository": {
     "url": "git+https://github.com/Torn-Playground/tornapi-typescript.git"
   },
